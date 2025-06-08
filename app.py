@@ -486,7 +486,7 @@ class DigitalToolboxApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Digital Toolbox")
-        self.root.geometry("500x550") # Initial size
+        self.root.geometry("300x300") # Initial size
 
         self.current_user = DEFAULT_USER
         self.user_prefs = UserPreferences(self.current_user)
