@@ -67,10 +67,10 @@ class UserPreferences:
         # For now, we'll rely on tools registering their default prefs upon initialization.
         pass
 
-
 # --- Base Tool Class ---
 class ToolBase(tk.Frame):
     """Base class for all tools to inherit from."""
+    # master = DigitalToolBoxApp.main_content_frame, app_controller = DigitalToolBoxApp
     def __init__(self, master, app_controller, tool_name, default_prefs=None):
         super().__init__(master)
         self.app_controller = app_controller
@@ -104,7 +104,6 @@ class ToolBase(tk.Frame):
         """Called when the tool is hidden. Override in subclasses if needed."""
         # print(f"{self.tool_name} hidden.")
         pass
-
 
 # --- Tool Implementations ---
 
@@ -189,16 +188,12 @@ class CalculatorTool(ToolBase):
         # self.app_controller.root.geometry(size) # This might be better handled at app level
 
 class ClockTool(ToolBase):
+    # master = DigitalToolBoxApp.main_content_frame, app_controller = DigitalToolBoxApp
     def __init__(self, master, app_controller):
         default_prefs = {"timezone": "System", "format": "24h", "show_date": True}
         super().__init__(master, app_controller, "Clock", default_prefs)
-        # REMOVE THESE LINES:
-        # self.time_label = None
-        # self.date_label = None
-        # The labels will be initialized in build_ui
 
     def build_ui(self):
-        # super().destroy() # REMOVED as per previous fix
         
         self.time_label = ttk.Label(self, text="", font=("Helvetica", 48))
         self.time_label.pack(pady=20, padx=20)
@@ -481,12 +476,59 @@ class SnakeGameTool(ToolBase):
         if self.canvas and self.canvas.winfo_exists(): # Ensure canvas exists
             self.canvas.focus_set() # Ensure focus when shown
 
+    # +++ TOOL IMPLEMENTATION with a BORDER +++
+
+class TestZoneTool(ToolBase):
+    def __init__(self, master, app_controller):
+        default_prefs = {"last_entry": "Hello, Grid!"}
+        super().__init__(master, app_controller, "Test Zone", default_prefs)
+
+    def build_ui(self):
+        # --- Configure the main frame's grid ---
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        # --- Create and configure a style for the border ---
+        # 1. Create a Style object
+        style = ttk.Style()
+        # 2. Configure a new custom style.
+        #    'Border.TFrame' is a custom name we invented. It inherits from TFrame.
+        #    'borderwidth' is the width in pixels.
+        #    'relief' is the visual style. 'solid' is a simple line. Other options:
+        #    'sunken', 'raised', 'groove', 'ridge'.
+        style.configure('Border.TFrame', borderwidth=2, relief='solid')
+
+        # Create a container frame inside the main tool frame
+        # Apply the new style using the 'style' option.
+        container = ttk.Frame(self, padding="10", style='Border.TFrame')
+        container.grid(row=0, column=0, sticky="nsew")
+
+        # Configure the container's grid
+        container.columnconfigure(0, weight=1)
+
+        # --- Place Widgets using .grid() ---
+        self.my_label = ttk.Label(container, text="This is the Test Zone!")
+        self.my_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+
+        self.my_entry = ttk.Entry(container, width=40)
+        self.my_entry.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
+        self.my_entry.insert(0, self.get_pref("last_entry", "default text"))
+
+        self.my_button = ttk.Button(container, text="Click Me!", command=self.on_button_click)
+        self.my_button.grid(row=2, column=0, padx=5, pady=10)
+
+    def on_button_click(self):
+        entered_text = self.my_entry.get()
+        self.my_label.config(text=f"You entered: {entered_text}")
+        self.save_pref("last_entry", entered_text)
+        messagebox.showinfo("Button Clicked", f"Hello from the Test Zone! You wrote:\n'{entered_text}'")
+
 # --- Main Application ---
 class DigitalToolboxApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Digital Toolbox")
-        self.root.geometry("300x300") # Initial size
+        self.root.geometry("500x500") # Initial size
 
         self.current_user = DEFAULT_USER
         self.user_prefs = UserPreferences(self.current_user)
@@ -511,6 +553,7 @@ class DigitalToolboxApp:
         tools_menu.add_command(label="Clock", command=lambda: self.show_tool(ClockTool))
         tools_menu.add_command(label="Timezone Calculator", command=lambda: self.show_tool(TimezoneTool))
         tools_menu.add_command(label="Snake Game", command=lambda: self.show_tool(SnakeGameTool))
+        tools_menu.add_command(label="Test Zone", command=lambda: self.show_tool(TestZoneTool))
         
         # Settings Menu (Example for Clock)
         settings_menu = tk.Menu(menubar, tearoff=0)
@@ -531,10 +574,10 @@ class DigitalToolboxApp:
 
         # --- Main content area ---
         self.main_content_frame = ttk.Frame(root)
-        self.main_content_frame.pack(fill="both", expand=True, padx=10, pady=10)
+        self.main_content_frame.pack(fill="both", expand=True, padx=25, pady=50)
 
         # Show a default tool or welcome message
-        self.show_tool(ClockTool) # Show Clock by default
+        self.show_tool(TestZoneTool) # Show Clock by default
 
     def update_clock_setting(self):
         self.user_prefs.set_preference("Clock", "format", self.clock_format_var.get())
@@ -549,7 +592,6 @@ class DigitalToolboxApp:
             # To make changes immediate, we can call update_clock directly if it's safe
             if hasattr(self.current_tool_frame, 'update_clock'):
                  self.current_tool_frame.update_clock()
-
 
     def switch_user(self):
         new_user = simpledialog.askstring("Switch User", "Enter username:", parent=self.root)
@@ -576,7 +618,6 @@ class DigitalToolboxApp:
         elif new_user is not None: # User entered empty string
             messagebox.showwarning("Invalid User", "Username cannot be empty.", parent=self.root)
 
-
     def show_tool(self, tool_class):
         if self.current_tool_frame:
             if hasattr(self.current_tool_frame, 'on_hide'):
@@ -593,7 +634,7 @@ class DigitalToolboxApp:
         # Update window title or other app-level things based on tool
         self.root.title(f"Digital Toolbox - {self.current_tool_frame.tool_name}")
 
-
+# --- Initiate tk loop ---
 if __name__ == "__main__":
     # Create user data directory if it doesn't exist
     if not os.path.exists(USER_DATA_DIR):

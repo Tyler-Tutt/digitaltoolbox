@@ -14,13 +14,13 @@ class FeetToMeters:
        
         self.feet = StringVar()
         feet_entry = ttk.Entry(mainframe, width=7, textvariable=self.feet)
-        feet_entry.grid(column=2, row=1, sticky=(W, E))
+        feet_entry.grid(column=1, row=1, sticky=(W, E))
         self.meters = StringVar()
 
         ttk.Label(mainframe, textvariable=self.meters).grid(column=2, row=2, sticky=(W, E))
         ttk.Button(mainframe, text="Calculate", command=self.calculate).grid(column=3, row=3, sticky=W)
 
-        ttk.Label(mainframe, text="feetssss").grid(column=3, row=1, sticky=W)
+        ttk.Label(mainframe, text="feet").grid(column=3, row=1, sticky=W)
         ttk.Label(mainframe, text="is equivalent to").grid(column=1, row=2, sticky=E)
         ttk.Label(mainframe, text="meters").grid(column=3, row=2, sticky=W)
 
