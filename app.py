@@ -106,7 +106,6 @@ class ToolBase(tk.Frame):
         pass
 
 # --- Tool Implementations ---
-
 class CalculatorTool(ToolBase):
     def __init__(self, master, app_controller):
         default_prefs = {"last_result": 0, "window_size": "300x400"}
@@ -496,18 +495,18 @@ class TestZoneTool(ToolBase):
         #    'borderwidth' is the width in pixels.
         #    'relief' is the visual style. 'solid' is a simple line. Other options:
         #    'sunken', 'raised', 'groove', 'ridge'.
-        style.configure('Border.TFrame', borderwidth=2, relief='solid')
+        style.configure('Border.TFrame', borderwidth=9, relief='solid')
 
         # Create a container frame inside the main tool frame
         # Apply the new style using the 'style' option.
-        container = ttk.Frame(self, padding="10", style='Border.TFrame')
+        container = ttk.Frame(self, padding="5", style='Border.TFrame')
         container.grid(row=0, column=0, sticky="nsew")
 
         # Configure the container's grid
         container.columnconfigure(0, weight=1)
 
         # --- Place Widgets using .grid() ---
-        self.my_label = ttk.Label(container, text="This is the Test Zone!")
+        self.my_label = ttk.Label(container, relief='raised', text="This is the Test Zone!")
         self.my_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
         self.my_entry = ttk.Entry(container, width=40)
@@ -523,12 +522,55 @@ class TestZoneTool(ToolBase):
         self.save_pref("last_entry", entered_text)
         messagebox.showinfo("Button Clicked", f"Hello from the Test Zone! You wrote:\n'{entered_text}'")
 
+class ButtonCommand(ToolBase):
+    def __init__(self, master, app_controller):
+        default_prefs = {"last_entry": "Hello, Grid!"}
+        super().__init__(master, app_controller, "Button Command", default_prefs)
+
+    def build_ui(self):
+        # --- Configure the main frame's grid ---
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        # --- Create and configure a style for the border ---
+        # 1. Create a Style object
+        style = ttk.Style()
+        # 2. Configure this style's ('style') style.
+        style.configure('Border.TFrame', borderwidth=1, relief='solid', background="red")
+
+        # Create a container frame inside the main tool frame
+        # Apply the new style using the 'style' option.
+        container = ttk.Frame(self, padding="5", style='Border.TFrame')
+        container.grid(column=0, row=0, sticky="nsew")
+
+        # Configure the container's grid
+        container.columnconfigure(0, weight=1)
+
+        # --- Place Widgets using .grid() ---
+        self.my_label = ttk.Label(container, relief='raised', text="This is the Test Zone!")
+        self.my_label.grid(column=0, row=0, padx=5, pady=5, sticky="w")
+
+        self.my_button = ttk.Button(container, text="Click Me!", command=self.on_button_click)
+        self.my_button.grid(column=0, row=1, padx=5, pady=10)
+        
+        button2Style = ttk.Style()
+        button2Style.configure('button2Style.TButton', background="green")
+        self.my_button2 = ttk.Button(container, text="Click Me!2", style='button2Style.TButton', command=self.on_button_click)
+        self.my_button2.grid(column=0, row=2, padx=5, pady=10)
+
+    def on_button_click(self):
+        entered_text = "Hello World"
+        messagebox.showinfo("Button Clicked", f"Hello from the Test Zone! You wrote:\n'{entered_text}'")
+
 # --- Main Application ---
 class DigitalToolboxApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Digital Toolbox")
-        self.root.geometry("500x500") # Initial size
+        # The size of a frame is determined by the size and layout of any widgets within it. 
+        # In turn, this is controlled by the geometry manager that manages the contents of the frame itself.
+        #self.root.geometry("500x500") # Initial size
+        # No Initial Size = Frame will adapt to widgets within it
 
         self.current_user = DEFAULT_USER
         self.user_prefs = UserPreferences(self.current_user)
@@ -554,6 +596,7 @@ class DigitalToolboxApp:
         tools_menu.add_command(label="Timezone Calculator", command=lambda: self.show_tool(TimezoneTool))
         tools_menu.add_command(label="Snake Game", command=lambda: self.show_tool(SnakeGameTool))
         tools_menu.add_command(label="Test Zone", command=lambda: self.show_tool(TestZoneTool))
+        tools_menu.add_command(label="Button Command", command=lambda: self.show_tool(ButtonCommand))
         
         # Settings Menu (Example for Clock)
         settings_menu = tk.Menu(menubar, tearoff=0)
@@ -573,11 +616,13 @@ class DigitalToolboxApp:
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
         # --- Main content area ---
-        self.main_content_frame = ttk.Frame(root)
-        self.main_content_frame.pack(fill="both", expand=True, padx=25, pady=50)
+        # padding & borderwidth on the *frame* control the 'padding' & 'border' (HTML)
+        self.main_content_frame = ttk.Frame(root, borderwidth=10, relief="groove", padding="15")
+        # padx & pady on the *Geometry Manager* control the 'Margin'
+        self.main_content_frame.pack(fill="both", expand=True, padx=15, pady=15)
 
         # Show a default tool or welcome message
-        self.show_tool(TestZoneTool) # Show Clock by default
+        self.show_tool(ButtonCommand) # Show's a default Tool on startup
 
     def update_clock_setting(self):
         self.user_prefs.set_preference("Clock", "format", self.clock_format_var.get())

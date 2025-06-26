@@ -7,7 +7,7 @@ class FeetToMeters:
 
         root.title("Feet to Meters")
 
-        mainframe = ttk.Frame(root, padding="3 3 12 12")
+        mainframe = ttk.Frame(root, borderwidth=5, padding="25", relief=SOLID)
         mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=1)
