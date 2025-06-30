@@ -3,7 +3,7 @@ from tkinter import ttk
 
 root = Tk()
 
-content = ttk.Frame(root, padding=(3,3,12,12))
+content = ttk.Frame(root, padding=(15,25), style='RedBackground.TFrame')
 frame = ttk.Frame(content, borderwidth=5, relief="ridge", width=200, height=100)
 namelbl = ttk.Label(content, text="Name")
 name = ttk.Entry(content)
@@ -22,9 +22,12 @@ three = ttk.Checkbutton(content, text="Three", variable=threevar, onvalue=True)
 ok = ttk.Button(content, text="Okay")
 cancel = ttk.Button(content, text="Cancel")
 
-content.grid(column=0, row=0, sticky=(N, S, E, W))
+style = ttk.Style()
+style.configure('RedBackground.TFrame', borderwidth=9, relief='solid', background="red")
+
+content.grid(column=0, row=0, sticky=(N, S, E, W), padx=15, pady=15)
 frame.grid(column=0, row=0, columnspan=3, rowspan=2, sticky=(N, S, E, W))
-namelbl.grid(column=3, row=0, columnspan=2, sticky=(N, W), padx=5)
+namelbl.grid(column=3, row=0, columnspan=2, padx=5)
 name.grid(column=3, row=1, columnspan=2, sticky=(N,E,W), pady=5, padx=5)
 one.grid(column=0, row=3)
 two.grid(column=1, row=3)

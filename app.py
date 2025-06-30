@@ -5,6 +5,7 @@ import os
 import time
 import datetime # Ensure this is imported
 import random
+import sys # Access system-specific parameters
 
 # --- Configuration ---
 USER_DATA_DIR = "user_data"
@@ -536,7 +537,8 @@ class ButtonCommand(ToolBase):
         # 1. Create a Style object
         style = ttk.Style()
         # 2. Configure this style's ('style') style.
-        style.configure('Border.TFrame', borderwidth=1, relief='solid', background="red")
+        style.configure('Border.TFrame', borderwidth=3, relief='solid', background="red")
+        style.configure('button2Style.TButton', background="green")
 
         # Create a container frame inside the main tool frame
         # Apply the new style using the 'style' option.
@@ -545,18 +547,17 @@ class ButtonCommand(ToolBase):
 
         # Configure the container's grid
         container.columnconfigure(0, weight=1)
+        container.columnconfigure(1, weight=1)
 
         # --- Place Widgets using .grid() ---
-        self.my_label = ttk.Label(container, relief='raised', text="This is the Test Zone!")
+        self.my_label = ttk.Label(container, relief='raised', text="Welcome to Button Command", padding=(5,15,15))
         self.my_label.grid(column=0, row=0, padx=5, pady=5, sticky="w")
 
         self.my_button = ttk.Button(container, text="Click Me!", command=self.on_button_click)
         self.my_button.grid(column=0, row=1, padx=5, pady=10)
         
-        button2Style = ttk.Style()
-        button2Style.configure('button2Style.TButton', background="green")
         self.my_button2 = ttk.Button(container, text="Click Me!2", style='button2Style.TButton', command=self.on_button_click)
-        self.my_button2.grid(column=0, row=2, padx=5, pady=10)
+        self.my_button2.grid(column=1, row=1, padx=5, pady=10)
 
     def on_button_click(self):
         entered_text = "Hello World"
@@ -572,6 +573,13 @@ class DigitalToolboxApp:
         #self.root.geometry("500x500") # Initial size
         # No Initial Size = Frame will adapt to widgets within it
 
+        # --- Set up the hotkey binding ---
+        # The .bind() method links an event pattern to a callback function.
+        # '<Control-q>' is the pattern for pressing CTRL and Q together.
+        # This is bound to the root window, so it works globally.
+        self.root.bind('<Control-q>', self.quit_app)
+        self.root.bind('<Control-r>', self.restart_app)
+
         self.current_user = DEFAULT_USER
         self.user_prefs = UserPreferences(self.current_user)
 
@@ -586,7 +594,9 @@ class DigitalToolboxApp:
         menubar.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(label="Switch User", command=self.switch_user)
         file_menu.add_separator()
-        file_menu.add_command(label="Exit", command=root.quit)
+        file_menu.add_command(label="Restart (Ctrl+R)", command=self.restart_app)
+        file_menu.add_separator()
+        file_menu.add_command(label="Exit (Ctrl+Q)", command=self.quit_app)
 
         # Tools Menu
         tools_menu = tk.Menu(menubar, tearoff=0)
@@ -623,6 +633,22 @@ class DigitalToolboxApp:
 
         # Show a default tool or welcome message
         self.show_tool(ButtonCommand) # Show's a default Tool on startup
+
+    # The 'event=None' allows this method to be called by the keybinding 
+    # (which sends an event object) and the menu (which doesn't).
+    def quit_app(self, event=None):
+        """Callback function to quit the application."""
+        self.root.quit()
+    
+    # --- New method to handle restarting the application ---
+    def restart_app(self, event=None):
+        """Destroys the current window and restarts the python script."""
+        # First, cleanly destroy the current Tkinter window
+        self.root.destroy()
+        # Then, use os.execl to replace the current process with a new one.
+        # sys.executable is the path to the current Python interpreter.
+        # sys.argv is the list of original command line arguments.
+        os.execl(sys.executable, sys.executable, *sys.argv)
 
     def update_clock_setting(self):
         self.user_prefs.set_preference("Clock", "format", self.clock_format_var.get())
