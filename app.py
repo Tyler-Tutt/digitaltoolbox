@@ -106,6 +106,15 @@ class ToolBase(tk.Frame):
         # print(f"{self.tool_name} hidden.")
         pass
 
+# --- Homepage ---
+class Homepage(ToolBase):
+    def __init__(self, master, app_controller):
+        super().__init__(master, app_controller, "Homepage")
+
+    def build_ui(self):
+        label = ttk.Label(self, text=f"{self.tool_name} - UI to be built")
+        label.pack(padx=20, pady=20)
+
 # --- Tool Implementations ---
 class CalculatorTool(ToolBase):
     def __init__(self, master, app_controller):
@@ -548,10 +557,12 @@ class ButtonCommand(ToolBase):
         # Configure the container's grid
         container.columnconfigure(0, weight=1)
         container.columnconfigure(1, weight=1)
+        container.rowconfigure(0, weight=3)
+        container.rowconfigure(1, weight=1)
 
         # --- Place Widgets using .grid() ---
-        self.my_label = ttk.Label(container, relief='raised', text="Welcome to Button Command", padding=(5,15,15))
-        self.my_label.grid(column=0, row=0, padx=5, pady=5, sticky="w")
+        self.my_label = ttk.Label(container, relief='raised', text="Welcome to Button Command", padding=(5,10,25), background="blue")
+        self.my_label.grid(column=0, row=0, padx=15, pady=5, sticky="n,s")
 
         self.my_button = ttk.Button(container, text="Click Me!", command=self.on_button_click)
         self.my_button.grid(column=0, row=1, padx=5, pady=10)
@@ -601,6 +612,7 @@ class DigitalToolboxApp:
         # Tools Menu
         tools_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Tools", menu=tools_menu)
+        tools_menu.add_command(label="Homepage", command=lambda: self.show_tool(Homepage))
         tools_menu.add_command(label="Calculator", command=lambda: self.show_tool(CalculatorTool))
         tools_menu.add_command(label="Clock", command=lambda: self.show_tool(ClockTool))
         tools_menu.add_command(label="Timezone Calculator", command=lambda: self.show_tool(TimezoneTool))
@@ -627,12 +639,12 @@ class DigitalToolboxApp:
 
         # --- Main content area ---
         # padding & borderwidth on the *frame* control the 'padding' & 'border' (HTML)
-        self.main_content_frame = ttk.Frame(root, borderwidth=10, relief="groove", padding="15")
+        self.main_content_frame = ttk.Frame(root, borderwidth=3, relief="groove")
         # padx & pady on the *Geometry Manager* control the 'Margin'
-        self.main_content_frame.pack(fill="both", expand=True, padx=15, pady=15)
+        self.main_content_frame.pack(fill="both", expand=True)
 
         # Show a default tool or welcome message
-        self.show_tool(ButtonCommand) # Show's a default Tool on startup
+        self.show_tool(Homepage) # Show's a default Tool on startup
 
     # The 'event=None' allows this method to be called by the keybinding 
     # (which sends an event object) and the menu (which doesn't).
@@ -709,7 +721,8 @@ class DigitalToolboxApp:
 if __name__ == "__main__":
     # Create user data directory if it doesn't exist
     if not os.path.exists(USER_DATA_DIR):
-        os.makedirs(USER_DATA_DIR)
+        os.makedirs(USE
+                    R_DATA_DIR)
 
     root = tk.Tk()
     app = DigitalToolboxApp(root)
