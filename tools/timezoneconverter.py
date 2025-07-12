@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-
 from .toolbase import ToolBase
+import datetime
 
 class TimezoneTool(ToolBase):
     def __init__(self, master, app_controller):
@@ -20,7 +20,6 @@ class TimezoneTool(ToolBase):
             self.available_timezones = ["UTC", "America/New_York", "Europe/London", "Asia/Tokyo", "Australia/Sydney"] # Sample list
 
     def build_ui(self):
-        # super().destroy() # REMOVED as per previous fix
         
         if not self.pytz:
             ttk.Label(self, text="pytz library not found. Timezone functionality will be limited.\nInstall with: pip install pytz", foreground="red").pack(pady=10)

@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from .toolbase import ToolBase
+import time
 
 class ClockTool(ToolBase):
     # master = DigitalToolBoxApp.main_content_frame, app_controller = DigitalToolBoxApp

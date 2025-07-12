@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from .toolbase import ToolBase
 
 
@@ -21,8 +21,7 @@ class TestZoneTool(ToolBase):
         # 2. Configure a new custom style.
         #    'Border.TFrame' is a custom name we invented. It inherits from TFrame.
         #    'borderwidth' is the width in pixels.
-        #    'relief' is the visual style. 'solid' is a simple line. Other options:
-        #    'sunken', 'raised', 'groove', 'ridge'.
+        #    'relief' is the visual style. 'solid' is a simple line. Other options: 'sunken', 'raised', 'groove', 'ridge'.
         style.configure('Border.TFrame', borderwidth=9, relief='solid')
 
         # Create a container frame inside the main tool frame
@@ -33,7 +32,7 @@ class TestZoneTool(ToolBase):
         container.grid(row=0, column=0, sticky="nsew")
 
         # Configure the container's grid
-        container.columnconfigure(0, weight=1)
+        # container.columnconfigure(0, weight=1)
         # container.rowconfigure(0, weight=1)
 
         # --- Place Widgets using .grid() ---

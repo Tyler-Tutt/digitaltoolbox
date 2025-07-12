@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from .toolbase import ToolBase
+import random
 
 class SnakeGameTool(ToolBase):
     GAME_SPEED = 200
