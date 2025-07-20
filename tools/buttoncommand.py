@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-
 from .toolbase import ToolBase
 
 class ButtonCommand(ToolBase):
@@ -17,13 +16,13 @@ class ButtonCommand(ToolBase):
         # 1. Create a Style object
         style = ttk.Style()
         # 2. Configure this style's ('style') style.
-        style.configure('Border.TFrame', borderwidth=3, relief='solid', background="red")
+        style.configure('RedBGBorder.TFrame', borderwidth=2, relief='solid', background="red")
         style.configure('button2Style.TButton', background="green")
 
         # Create a container frame inside the main tool frame
         # Apply the new style using the 'style' option.
-        container = ttk.Frame(self, padding="5", style='Border.TFrame')
-        container.grid(column=0, row=0, sticky="nsew")
+        container = ttk.Frame(self, padding="3", style='RedBGBorder.TFrame')
+        container.grid(column=0, row=0, sticky="nsew", padx=10, pady=10)
 
         # Configure the container's grid
         container.columnconfigure(0, weight=1)
@@ -33,7 +32,7 @@ class ButtonCommand(ToolBase):
 
         # --- Place Widgets using .grid() ---
         self.my_label = ttk.Label(container, relief='raised', text="Welcome to Button Command", padding=(5,10,25), background="blue")
-        self.my_label.grid(column=0, row=0, padx=15, pady=5, sticky="n,s")
+        self.my_label.grid(column=0, row=0, padx=15, pady=0, sticky="n,s")
 
         self.my_button = ttk.Button(container, text="Click Me!", command=self.on_button_click)
         self.my_button.grid(column=0, row=1, padx=5, pady=10)

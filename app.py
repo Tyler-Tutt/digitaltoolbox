@@ -4,6 +4,9 @@ import json
 import os
 import sys # Access system-specific parameters
 
+# TODO Current ToDo: Just figured out how to launch a python app in windows even when developing on WSL
+# TODO Do a good Obsidian Guide so as to be able to recreate that workflow / research easier/efficient of the same workflow
+
 # --- tool imports from package ---
 from tools.buttoncommand import ButtonCommand
 from tools.calculator import CalculatorTool
@@ -12,6 +15,7 @@ from tools.homepage import Homepage
 from tools.snakegame import SnakeGameTool
 from tools.testzonetool import TestZoneTool
 from tools.timezoneconverter import TimezoneTool
+from tools.diffchecker import DiffChecker
 from tools.toolbase import ToolBase
 
 # --- Configuration ---
@@ -96,6 +100,7 @@ class DigitalToolboxApp:
         # This is bound to the root window, so it works globally.
         self.root.bind('<Control-q>', self.quit_app)
         self.root.bind('<Control-r>', self.restart_app)
+        self.root.bind('<Control-h>', self.return_to_homepage)
 
         self.current_user = DEFAULT_USER
         self.user_prefs = UserPreferences(self.current_user)
@@ -125,6 +130,7 @@ class DigitalToolboxApp:
         tools_menu.add_command(label="Snake Game", command=lambda: self.show_tool(SnakeGameTool))
         tools_menu.add_command(label="Test Zone", command=lambda: self.show_tool(TestZoneTool))
         tools_menu.add_command(label="Button Command", command=lambda: self.show_tool(ButtonCommand))
+        tools_menu.add_command(label="Diff Checker", command=lambda: self.show_tool(DiffChecker))
         
         # Settings Menu (Example for Clock)
         settings_menu = tk.Menu(menubar, tearoff=0)
@@ -144,9 +150,9 @@ class DigitalToolboxApp:
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
         # --- Main content area ---
-        # padding & borderwidth on the *frame* control the 'padding' & 'border' (HTML)
+        # padding & borderwidth on the *frame widget* control the 'padding' & 'border' (Box Model)
         self.main_content_frame = ttk.Frame(root, borderwidth=3, relief="groove")
-        # padx & pady on the *Geometry Manager* control the 'Margin'
+        # padx & pady on the *Geometry Manager for the widget* control the 'Margin'
         self.main_content_frame.pack(fill="both", expand=True)
 
         # Show a default tool or welcome message
@@ -157,8 +163,7 @@ class DigitalToolboxApp:
     def quit_app(self, event=None):
         """Callback function to quit the application."""
         self.root.quit()
-    
-    # --- New method to handle restarting the application ---
+
     def restart_app(self, event=None):
         """Destroys the current window and restarts the python script."""
         # First, cleanly destroy the current Tkinter window
@@ -167,6 +172,9 @@ class DigitalToolboxApp:
         # sys.executable is the path to the current Python interpreter.
         # sys.argv is the list of original command line arguments.
         os.execl(sys.executable, sys.executable, *sys.argv)
+
+    def return_to_homepage(self, event=None):
+        self.show_tool(Homepage)
 
     def update_clock_setting(self):
         self.user_prefs.set_preference("Clock", "format", self.clock_format_var.get())
@@ -229,7 +237,7 @@ if __name__ == "__main__":
     if not os.path.exists(USER_DATA_DIR):
         os.makedirs(USER_DATA_DIR)
 
-    DEFAULT_TOOL = TestZoneTool
+    DEFAULT_TOOL = Homepage
 
     root = tk.Tk()
     app = DigitalToolboxApp(root)
