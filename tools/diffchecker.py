@@ -7,5 +7,5 @@ class DiffChecker(ToolBase):
         super().__init__(master, app_controller, "Diff Checker")
 
     def build_ui(self):
-        label = ttk.Label(self, text=f"{self.tool_name} - UI to be built")
+        label = ttk.Label(self, text=f"{self.tool_name} - TODO")
         label.pack(padx=20, pady=20)
