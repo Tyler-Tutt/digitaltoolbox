@@ -3,6 +3,8 @@ from tkinter import ttk, messagebox, simpledialog
 import json
 import os
 import sys # Access system-specific parameters
+import database # database.py file
+from database import UserPreferences
 
 # TODO Current ToDo: Just figured out how to launch a python app in windows even when developing on WSL
 # TODO Do a good Obsidian Guide so as to be able to recreate that workflow / research easier/efficient of the same workflow
@@ -22,63 +24,6 @@ from tools.toolbase import ToolBase
 USER_DATA_DIR = "user_data"
 DEFAULT_USER = "default_user"
 DEFAULT_TOOL = None
-
-# --- User and Preference Management ---
-class UserPreferences:
-    def __init__(self, username):
-        self.username = username
-        self.user_dir = os.path.join(USER_DATA_DIR, self.username)
-        os.makedirs(self.user_dir, exist_ok=True)
-        self.preferences = {}
-        self.load_all_preferences()
-
-    def _get_pref_file_path(self, tool_name):
-        """Helper to get the path to a tool's preference file."""
-        return os.path.join(self.user_dir, f"{tool_name}_prefs.json")
-
-    def load_preferences(self, tool_name, default_prefs=None):
-        """Loads preferences for a specific tool."""
-        if default_prefs is None:
-            default_prefs = {}
-        file_path = self._get_pref_file_path(tool_name)
-        try:
-            with open(file_path, 'r') as f:
-                prefs = json.load(f)
-                self.preferences[tool_name] = prefs
-                return prefs
-        except (FileNotFoundError, json.JSONDecodeError):
-            self.preferences[tool_name] = default_prefs
-            self.save_preferences(tool_name, default_prefs) # Save defaults if not found
-            return default_prefs
-
-    def save_preferences(self, tool_name, prefs_data):
-        """Saves preferences for a specific tool."""
-        file_path = self._get_pref_file_path(tool_name)
-        self.preferences[tool_name] = prefs_data # Update in-memory cache
-        try:
-            with open(file_path, 'w') as f:
-                json.dump(prefs_data, f, indent=4)
-        except IOError as e:
-            print(f"Error saving preferences for {tool_name}: {e}")
-
-
-    def get_preference(self, tool_name, key, default=None):
-        """Gets a specific preference value for a tool."""
-        return self.preferences.get(tool_name, {}).get(key, default)
-
-    def set_preference(self, tool_name, key, value):
-        """Sets a specific preference value for a tool and saves it."""
-        if tool_name not in self.preferences:
-            self.preferences[tool_name] = {}
-        self.preferences[tool_name][key] = value
-        self.save_preferences(tool_name, self.preferences[tool_name])
-
-    def load_all_preferences(self):
-        """Loads all preference files found in the user's directory."""
-        # This is a basic implementation. For a real app, you might list known tools
-        # or have a manifest file.
-        # For now, we'll rely on tools registering their default prefs upon initialization.
-        pass
 
 # --- Main Application ---
 class DigitalToolboxApp:
@@ -196,8 +141,10 @@ class DigitalToolboxApp:
             if self.current_tool_frame and hasattr(self.current_tool_frame, 'on_hide'):
                 self.current_tool_frame.on_hide()
             
+            self.user_prefs.close_connection()
             self.current_user = new_user.strip()
-            self.user_prefs = UserPreferences(self.current_user) # Load/create new user's prefs
+            self.user_prefs = UserPreferences(self.current_user)
+            
             self.status_bar.config(text=f"Current User: {self.current_user}")
             messagebox.showinfo("User Switched", f"Switched to user: {self.current_user}", parent=self.root)
             
@@ -233,9 +180,7 @@ class DigitalToolboxApp:
 
 # --- Initiate tk loop ---
 if __name__ == "__main__":
-    # Create user data directory if it doesn't exist
-    if not os.path.exists(USER_DATA_DIR):
-        os.makedirs(USER_DATA_DIR)
+    database.init_db()
 
     DEFAULT_TOOL = Homepage
 
