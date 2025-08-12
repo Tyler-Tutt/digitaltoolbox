@@ -36,12 +36,16 @@ class DigitalToolboxApp:
         #self.root.geometry("500x500") # Initial size
         # No Initial Size = Frame will adapt to widgets within it
         # 'zoomed' = maximized window
-        self.root.attributes('-zoomed', True)
+        self.root.attributes('-fullscreen', True)
         # root.state('zoomed')
+
+        # This line tells Tkinter to call our custom quit_app function
+        # whenever the user clicks the 'X' button on the window.
+        # This ensures the database connection is always closed cleanly.
+        self.root.protocol("WM_DELETE_WINDOW", self.quit_app)
 
         # --- Set up the hotkey binding ---
         # The .bind() method links an event pattern to a callback function.
-        # '<Control-q>' is the pattern for pressing CTRL and Q together.
         # This is bound to the root window, so it works globally.
         self.root.bind('<Control-q>', self.quit_app)
         self.root.bind('<Control-r>', self.restart_app)

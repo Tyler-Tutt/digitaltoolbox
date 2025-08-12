@@ -49,23 +49,37 @@ class UserPreferences:
         cursor.execute("SELECT preferences FROM users WHERE username = ?", (self.username,))
         row = cursor.fetchone()
         
-        if row:
+        if row and row['preferences']:
             # User exists, load their preferences
             # The preferences are stored as a JSON string, so we parse it
             return json.loads(row['preferences'])
         else:
-            # User does not exist, create them with empty preferences
+            # User does not exist or has no prefs, create them with empty preferences
             default_prefs = {}
             # Convert the dictionary to a JSON string for storage
             prefs_json = json.dumps(default_prefs)
-            cursor.execute("INSERT INTO users (username, preferences) VALUES (?, ?)",
-                           (self.username, prefs_json))
+            if row: # User exists but prefs are NULL
+                 cursor.execute("UPDATE users SET preferences = ? WHERE username = ?", (prefs_json, self.username))
+            else: # User does not exist
+                 cursor.execute("INSERT INTO users (username, preferences) VALUES (?, ?)",
+                               (self.username, prefs_json))
             self.conn.commit()
             return default_prefs
 
+    # --- NEW METHOD ---
+    def get_tool_preferences(self, tool_name, default_prefs=None):
+        """Gets the entire preference dictionary for a specific tool."""
+        if default_prefs is None:
+            default_prefs = {}
+        # Get the sub-dictionary for the tool, or return the default if not found.
+        return self.preferences.get(tool_name, default_prefs)
+
     def get_preference(self, tool_name, key, default=None):
-        """Gets a specific preference value for a tool."""
-        return self.preferences.get(tool_name, {}).get(key, default)
+        """Gets a specific preference value from within a tool's preferences."""
+        # Get the tool's preference dictionary first
+        tool_prefs = self.preferences.get(tool_name, {})
+        # Then get the specific key from that dictionary
+        return tool_prefs.get(key, default)
 
     def set_preference(self, tool_name, key, value):
         """Sets a specific preference value and saves it to the database."""
