@@ -5,9 +5,10 @@ import os
 import sys # Access system-specific parameters
 import database # database.py file
 from database import UserPreferences
+from ttkthemes import ThemedTk
 
 # TODO Current ToDo: Just figured out how to launch a python app in windows even when developing on WSL
-# TODO Do a good Obsidian Guide so as to be able to recreate that workflow / research easier/efficient of the same workflow
+# TODO Create a README.md so as to be able to recreate that workflow / research easier/efficient of the same workflow
 
 # --- tool imports from package ---
 from tools.buttoncommand import ButtonCommand
@@ -38,6 +39,8 @@ class DigitalToolboxApp:
         # 'zoomed' = maximized window
         self.root.attributes('-fullscreen', True)
         # root.state('zoomed')
+
+        self.root.set_theme("black")
 
         # This line tells Tkinter to call our custom quit_app function
         # whenever the user clicks the 'X' button on the window.
@@ -188,6 +191,6 @@ if __name__ == "__main__":
 
     DEFAULT_TOOL = Homepage
 
-    root = tk.Tk()
+    root = ThemedTk()
     app = DigitalToolboxApp(root)
     root.mainloop()
