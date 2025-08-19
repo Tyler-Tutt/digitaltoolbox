@@ -8,7 +8,7 @@ from .toolbase import ToolBase
 from .testzonetool import TestZoneTool
 from .calculator import CalculatorTool
 from .clock import ClockTool
-from .buttoncommand import ButtonCommand # Assuming you have this file
+from .buttoncommand import ButtonCommand
 
 class Homepage(ToolBase):
     def __init__(self, master, app_controller):

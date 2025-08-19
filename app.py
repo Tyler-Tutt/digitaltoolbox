@@ -7,9 +7,6 @@ import database # database.py file
 from database import UserPreferences
 from ttkthemes import ThemedTk
 
-# TODO Current ToDo: Just figured out how to launch a python app in windows even when developing on WSL
-# TODO Create a README.md so as to be able to recreate that workflow / research easier/efficient of the same workflow
-
 # --- tool imports from package ---
 from tools.buttoncommand import ButtonCommand
 from tools.calculator import CalculatorTool
@@ -37,7 +34,7 @@ class DigitalToolboxApp:
         #self.root.geometry("500x500") # Initial size
         # No Initial Size = Frame will adapt to widgets within it
         # 'zoomed' = maximized window
-        self.root.attributes('-fullscreen', True)
+        # self.root.attributes('-fullscreen', True)
         # root.state('zoomed')
 
         self.root.set_theme("black")

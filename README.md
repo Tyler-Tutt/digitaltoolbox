@@ -14,9 +14,13 @@
     python -m venv .venv
 ## Create Windows Virtual Environment:
     python3 -m venv venv_win
+## Install dependencies
+    pip install -r requirements.txt
 
-Dev Environment Routine:
-# Bash Activate Linux Virutal Environment:
+# Dev Environment Routine:
+## Bash Activate Linux Virutal Environment:
     source venv/bin/activate
-# Powershell Activate Windows Virutal Environment
+## Powershell Activate Windows Virutal Environment
     .\venv_win\Scripts\activate
+## When installing a new library
+    pip freeze > requirements.txt
