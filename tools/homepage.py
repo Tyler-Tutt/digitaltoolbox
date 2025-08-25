@@ -9,6 +9,8 @@ from .testzonetool import TestZoneTool
 from .calculator import CalculatorTool
 from .clock import ClockTool
 from .buttoncommand import ButtonCommand
+from .charactersheet import CharacterSheet
+from .TEST_StatCalc import StatCalculator
 
 class Homepage(ToolBase):
     def __init__(self, master, app_controller):
@@ -36,11 +38,13 @@ class Homepage(ToolBase):
             ("Calculator", CalculatorTool),
             ("Clock", ClockTool),
             ("Button Command", ButtonCommand),
-            ("Test Zone", TestZoneTool)
+            ("Test Zone", TestZoneTool),
+            ("Character Sheet", CharacterSheet),
+            ("TestCalc", StatCalculator)
         ]
 
         # --- Create Buttons in a Loop ---
-        # Loop through the data structure to create each button.
+        # Loop through the data structure (tool_buttons) to create each button.
         # This avoids repeating the button creation code.
         for button_text, tool_class in tool_buttons:
             # The 'command' uses a lambda function. The 'tool=tool_class' is a special

@@ -16,12 +16,12 @@ class ButtonCommand(ToolBase):
         # 1. Create a Style object
         style = ttk.Style()
         # 2. Configure this style's ('style') style.
-        style.configure('RedBGBorder.TFrame', borderwidth=2, relief='solid', background="red")
-        style.configure('button2Style.TButton', background="green")
+        style.configure('frame.TFrame', borderwidth=2, relief='solid', background="red")
+        style.configure('button2.TButton', background="green")
 
         # Create a container frame inside the main tool frame
         # Apply the new style using the 'style' option.
-        container = ttk.Frame(self, padding="3", style='RedBGBorder.TFrame')
+        container = ttk.Frame(self, padding="3", style='frame.TFrame')
         container.grid(column=0, row=0, sticky="nsew", padx=10, pady=10)
 
         # Configure the container's grid
@@ -37,7 +37,7 @@ class ButtonCommand(ToolBase):
         self.my_button = ttk.Button(container, text="Click Me!", command=self.on_button_click)
         self.my_button.grid(column=0, row=1, padx=5, pady=10)
         
-        self.my_button2 = ttk.Button(container, text="Click Me!2", style='button2Style.TButton', command=self.on_button_click)
+        self.my_button2 = ttk.Button(container, text="Click Me!2", style='button2.TButton', command=self.on_button_click)
         self.my_button2.grid(column=1, row=1, padx=5, pady=10)
 
     def on_button_click(self):
